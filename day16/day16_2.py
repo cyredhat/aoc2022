@@ -33,16 +33,20 @@ def dfs(time, acc, v, valves):
   global memo, max_acc, time_limit
   if acc > max_acc:
     max_acc = acc
-    print(max_acc)
   if len(valves) == 0:
+    return
+  h, e = v
+  time_h, time_e = time
+  theoretical_max_acc = acc
+  for n in valves:
+    theoretical_max_acc += max(time_limit - mat[(h, n)] - time_h, time_limit - mat[(e, n)] - time_e) * edges[n][0]
+  if theoretical_max_acc < max_acc:
     return
   if (v, tuple(valves)) in memo:
     mt, macc = memo[(v, tuple(valves))]
     if time[0] >= mt[0] and time[1] >= mt[1] and acc <= macc:
       return
   memo[(v, tuple(valves))] = time, acc
-  h, e = v
-  time_h, time_e = time
   for n in valves:
     if (time_limit - mat[(h, n)] - time_h) * edges[n][0] > 0:
       dfs((time_h + mat[(h, n)] + 1, time_e), acc + (time_limit - mat[(h, n)] - time_h) * edges[n][0], (n, e), valves - {n})
